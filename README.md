@@ -119,3 +119,19 @@ sudo -u mongod /usr/bin/mongod -f /etc/mongod.conf
 ```
 sudo -u mongod mongod -f /etc/mongod.conf --shutdown
 ```
+
+# MongoDBの初期設定  
+#スーパーユーザ作成  
+```
+# mongosh
+> use admin
+> db.createUser(
+    {
+        user: "admin",
+        pwd: "tkhA5119083?",
+        roles: [ { role: "root", db: "admin" } ]
+    }
+)
+```
+#認証の有効化  
+※ユーザを作成後に人称の有効化をしないとログインできなくなってしまうので注意！  
