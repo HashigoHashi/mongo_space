@@ -64,3 +64,44 @@ gpgkey=https://pgp.mongodb.com/server-8.0.asc
 ```
 sudo yum install -y mongodb-org
 ```
+
+
+#起動準備
+#MongoDB管理ユーザの作成
+sudo useradd -s /bin/false mongod
+| 用途 | ディレクトリーパス |
+|--------------|------------------------|
+| データ  | /var/lib/mongo        |
+| ログファイル  | /var/log/mongodb  |
+| PIDファイル | /var/run/mongodb              |
+
+#ディレクトリはMongoDB管理ユーザを所有者にする
+sudo chown -R mongod:mongod /var/lib/mongo
+sudo chown -R mongod:mongod /var/log/mongodb
+sudo chown -R mongod:mongod /var/run/mongodb
+
+#設定ファイル作成
+sudo vi /etc/mongod.conf
+以下の内容で用意
+```
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb/mongod.log
+
+storage:
+  dbPath: /var/lib/mongo
+  journal:
+    enabled: true
+
+processManagement:
+  fork: true
+  pidFilePath: /var/run/mongodb/mongod.pid
+  timeZoneInfo: /usr/share/zoneinfo
+
+net:
+  port: 27017
+  bindIp: 127.0.0.1 
+```
+
+#
