@@ -31,3 +31,19 @@ always madvise [never]
 https://www.mongodb.com/ja-jp/docs/manual/reference/ulimit/#recommended-ulimit-settings
 #確認
 ulimit -a
+
+#yumでインストール
+https://www.mongodb.com/ja-jp/docs/manual/tutorial/install-mongodb-on-amazon/#install-mongodb-community-edition
+#リポジトリファイルを作成
+[takahashi_daigo@localhost ~]$ cd /etc/yum.repos.d/
+[takahashi_daigo@localhost yum.repos.d]$ sudo touch mongodb-org-8.0.repo
+以下の内容で用意
+[mongodb-org-8.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2023/mongodb-org/8.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://pgp.mongodb.com/server-8.0.asc
+
+#MongoDBのインストール
+sudo yum install -y mongodb-org
