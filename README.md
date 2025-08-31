@@ -38,15 +38,15 @@ f4d751f805ee46a0913f76b9bb80739a-5.14.0-570.25.1.el9_6.x86_64.conf  f4d751f805ee
 always madvise [never]
 ```
 
-#ulimit設定変更
-https://www.mongodb.com/ja-jp/docs/manual/reference/ulimit/#recommended-ulimit-settings
-#確認
+#ulimit設定変更  
+https://www.mongodb.com/ja-jp/docs/manual/reference/ulimit/#recommended-ulimit-settings  
+#確認  
 ```
 ulimit -a
 ```
-#yumでインストール
-https://www.mongodb.com/ja-jp/docs/manual/tutorial/install-mongodb-on-amazon/#install-mongodb-community-edition
-#リポジトリファイルを作成
+#yumでインストール  
+https://www.mongodb.com/ja-jp/docs/manual/tutorial/install-mongodb-on-amazon/#install-mongodb-community-edition  
+#リポジトリファイルを作成  
 ```
 [takahashi_daigo@localhost ~]$ cd /etc/yum.repos.d/
 [takahashi_daigo@localhost yum.repos.d]$ sudo touch mongodb-org-8.0.repo
