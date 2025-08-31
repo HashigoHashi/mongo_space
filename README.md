@@ -108,4 +108,8 @@ net:
   bindIp: 127.0.0.1 
 ```
 
-#
+#起動
+#child process started successfully, parent exitingと表示されれば起動完了
+```
+sudo -u mongod /usr/bin/mongod -f /etc/mongod.conf
+```
