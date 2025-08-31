@@ -113,3 +113,8 @@ net:
 ```
 sudo -u mongod /usr/bin/mongod -f /etc/mongod.conf
 ```
+
+#停止
+```
+sudo -u mongod mongod -f /etc/mongod.conf --shutdown
+```
