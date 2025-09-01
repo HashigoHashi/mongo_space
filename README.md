@@ -135,3 +135,21 @@ sudo -u mongod mongod -f /etc/mongod.conf --shutdown
 ```
 #認証の有効化  
 ※ユーザを作成後に人称の有効化をしないとログインできなくなってしまうので注意！  
+```
+# sudo vi /etc/mongod.conf
+```
+以下の内容を追加
+```
+security:
+  authorization: enabled
+```
+
+#MongoDBの再起動
+```
+# systemctl restart mongod
+```
+
+#接続
+```
+mongosh admin -u admin -p tkhA5119083?
+```
