@@ -153,3 +153,14 @@ security:
 ```
 mongosh admin -u admin -p tkhA5119083?
 ```
+
+#バインドIPの変更
+```
+sudo vi /etc/mongod.conf
+```
+以下の内容を追加
+```
+net:
+  port: 27017
+  bindIp: 0.0.0.0 
+```
