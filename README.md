@@ -164,3 +164,7 @@ net:
   port: 27017
   bindIp: 0.0.0.0 
 ```
+
+```
+mongosh -u admin -p
+```
