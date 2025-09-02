@@ -327,3 +327,24 @@ net:
     { upsert: true }
 )
 ```
+
+//ドキュメントを1件削除
+```
+> db.fishes.deleteOne(
+    { name: "カツオ"}
+)
+```
+
+//ドキュメントを複数件削除
+```
+> db.fishes.deleteMany(
+    { name: /サ/ }
+)
+```
+
+//インデックス作成
+```
+> db.fishes.createIndex(
+     { name: 1 }
+)
+```
