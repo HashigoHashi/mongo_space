@@ -291,3 +291,39 @@ net:
     { _id: 0 }
 )
 ```
+
+//ドキュメント更新
+```
+> db.fishes.update(
+    { "name": "マグロ" },
+    { $set: { "price": 2000 } }
+)
+```
+
+//フィールドの追加  
+存在しないフィールドを更新すると、エラーとはならず素のフィールドが追加される
+```
+> db.fishes.update(
+    { },
+    { $set: { "part" : null } },
+    { multi: true }
+)
+```
+
+//フィールドの削除
+```
+> db.fishes.update(
+    { },
+    { $unset: { "part": "" } },
+    { multi: true }
+)
+```
+
+//UPSERT
+```
+> db.fishes.update(
+    { "name": "カツオ"},
+    { $set: { "price": 450 } },
+    { upsert: true }
+)
+```
