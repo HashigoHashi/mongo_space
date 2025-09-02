@@ -149,11 +149,6 @@ security:
 # systemctl restart mongod
 ```
 
-#接続
-```
-mongosh admin -u admin -p tkhA5119083?
-```
-
 #バインドIPの変更
 ```
 sudo vi /etc/mongod.conf
@@ -165,6 +160,62 @@ net:
   bindIp: 0.0.0.0 
 ```
 
+#接続
 ```
-mongosh -u admin -p
+# mongosh -u admin -p
+```
+
+# データベースとコレクションの操作
+
+#データベースの作成
+```
+> use testdb
+```
+
+#データベースの削除  
+※現在接続されているデータベースが削除される
+```
+> db.dropDatabase()
+```
+
+#データベース管理者を作成
+```
+> db.createUser(
+    {
+        user: "testdbOwner",
+        pwd: "tkhA5119083?",
+        roles: [ { role: 'dbOwner', db: "testdb" } ]
+    }
+)
+```
+
+#ユーザの削除
+```
+> db.dropUser("testdbOwner")
+```
+
+#ユーザのパスワード変更
+```
+> db.changeUserPassword("testdbOwner", "password")
+```
+
+#コレクション作成
+```
+> db.createCollection("testcollection")
+```
+
+#コレクションの作成
+```
+> db.testdb.drop()
+```
+
+#キャップド・コレクション作成  
+//最大1メガバイト
+```
+> db.createCollection( "logSize", { capped: true, size: 1048576 } )
+```
+
+//最大1万件
+```
+> db.createCollection( "logMax", { capped: true, max: 10000 } )
 ```
