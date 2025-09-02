@@ -219,3 +219,75 @@ net:
 ```
 > db.createCollection( "logMax", { capped: true, max: 10000 } )
 ```
+
+# ドキュメントの操作
+
+//1件のドキュメントを追加
+```
+> db.fishes.insert( { name: "マグロ", price: 1000 } )
+```
+
+//複数件のドキュメントを追加
+```
+> db.fishes.insert([
+    {name: "サンマ", price:360},
+    {name: "タイ", price:500},
+    {name: "サバ", price:400}
+])
+```
+
+//全件検索
+```
+> db.fishes.find()
+```
+
+//_idを除外して全件検索
+```
+> db.fishes.find(
+    {},
+    { _id: 0 }
+)
+```
+
+//完全一致検索
+```
+> db.fishes.find(
+    { name:"マグロ"},
+    {_id: 0 }
+)
+```
+
+//部分一致検索
+```
+> db.fishes.find(
+    { name:/サ/ },
+    { _id: 0 }
+)
+```
+
+//範囲検索例1
+```
+> db.fishes.find(
+    { "price": { $lt: 500 } },
+    { _id: 0 }
+)
+```
+
+//範囲検索例2
+```
+> db.fishes.find(
+    { "price": { $gte: 300, $lte: 500}},
+    { _id: 0}
+)
+```
+
+//範囲検索例3
+```
+> db.fishes.find(
+    { $and: [
+        { "name": /サ/},
+        { "price": { $gte: 400 } }
+    ]},
+    { _id: 0 }
+)
+```
