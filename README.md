@@ -355,3 +355,28 @@ db.コレクション名.getIndexes()で確認可能
 ```
 > db.fishes.dropIndex("インデックス名")
 ```
+
+
+# レプリカセット  
+
+#レプリカセット構築手順  
+冗長化という点では意味がないが、テスト的に同じサーバ内にMongoDBインスタンスを複数起動する方法で説明
+```
+//データベースディレクトリの作成
+$ sudo mkdir /var/lib/mongo-sec
+$ sudo mkdir /var/lib/mongo-arb
+
+//ログディレクトリの作成
+$ sudo mkdir /var/log/mongodb-sec
+$ sudo mkdir /var/log/mongodb-arb
+
+//所有者の変更
+$ sudo chown mongod:mongod /var/lib/mongo-sec
+$ sudo chown mongod:mongod /var/lib/mongo-arb
+$ sudo chown mongod:mongod /var/log/mongodb-sec
+$ sudo chown mongod:mongod /var/log/mongodb-arb
+
+//設定ファイルを複製
+$ sudo cp -p /etc/mongod.conf /etc/mongod-sec.conf
+$ sudo cp -p /etc/mongod.conf /etc/mongod-arb.conf
+```
