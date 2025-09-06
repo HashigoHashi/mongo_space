@@ -109,7 +109,7 @@ net:
   bindIp: 127.0.0.1 
 ```
 
-#起動
+#起動  
 #child process started successfully, parent exitingと表示されれば起動完了
 ```
 sudo -u mongod /usr/bin/mongod -f /etc/mongod.conf
@@ -119,6 +119,61 @@ sudo -u mongod /usr/bin/mongod -f /etc/mongod.conf
 ```
 sudo -u mongod mongod -f /etc/mongod.conf --shutdown
 ```
+
+#Systemdで管理  
+#ユニットファイルの作成  
+/usr/lib/systemd/system/mongod.service
+```
+[Unit]
+Description=MongoDB Database Server
+Documentation=https://docs.mongodb.org/manual
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=mongod
+Group=mongod
+Environment="OPTIONS=-f /etc/mongod.conf"
+Environment="MONGODB_CONFIG_OVERRIDE_NOFORK=1"
+Environment="GLIBC_TUNABLES=glibc.pthread.rseq=0"
+EnvironmentFile=-/etc/sysconfig/mongod
+ExecStart=/usr/bin/mongod $OPTIONS
+RuntimeDirectory=mongodb
+# file size
+LimitFSIZE=infinity
+# cpu time
+LimitCPU=infinity
+# virtual memory size
+LimitAS=infinity
+# open files
+LimitNOFILE=64000
+# processes/threads
+LimitNPROC=64000
+# locked memory
+LimitMEMLOCK=infinity
+# total threads (user+kernel)
+TasksMax=infinity
+TasksAccounting=false
+# Recommended limits for mongod as specified in
+# https://docs.mongodb.com/manual/reference/ulimit/#recommended-ulimit-settings
+
+[Install]
+WantedBy=multi-user.target
+```
+#設定ファイルのロード
+```
+systemctl deamon-reload
+```
+
+#起動
+```
+$ systemctl start mongod
+```
+#停止
+```
+$ systemctl stop mongod
+```
+
 
 # MongoDBの初期設定  
 #スーパーユーザ作成  
@@ -379,4 +434,60 @@ $ sudo chown mongod:mongod /var/log/mongodb-arb
 //設定ファイルを複製
 $ sudo cp -p /etc/mongod.conf /etc/mongod-sec.conf
 $ sudo cp -p /etc/mongod.conf /etc/mongod-arb.conf
+```
+
+//設定ファイルを編集  
+mongod-sec.conf
+```
+# mongod.conf
+
+# for documentation of all options, see:
+#   http://docs.mongodb.org/manual/reference/configuration-options/
+
+# where to write logging data.
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb-sec/mongod.log
+
+# Where and how to store data.
+storage:
+  dbPath: /var/lib/mongo-sec
+
+# how the process runs
+processManagement:
+  fork: true
+  pidFilePath: /var/run/mongodb/mongod-sec.pid
+  timeZoneInfo: /usr/share/zoneinfo
+
+# network interfaces
+net:
+  port: 27018
+  bindIp: 0.0.0.0  # Enter 0.0.0.0,:: to bind to all IPv4 and IPv6 addresses or, alternatively, use the net.bindIpAll setting.
+
+
+# security:
+#   authorization: enabled
+
+#operationProfiling:
+
+#replication:
+
+#sharding:
+
+## Enterprise-Only Options
+
+#auditLog:
+
+```
+
+mongod-arb.conf
+```
+
+```
+
+//セカンダリとアービターの起動
+```
+$ sudo -u mongod /usr/bin/mongod -f /etc/mongod-sec.conf
+$ sudo -u mongod /usr/bin/mongod -f /etc/mongod-arb.conf
 ```
