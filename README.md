@@ -483,10 +483,50 @@ net:
 
 mongod-arb.conf
 ```
+# mongod.conf
+
+# for documentation of all options, see:
+#   http://docs.mongodb.org/manual/reference/configuration-options/
+
+# where to write logging data.
+systemLog:
+  destination: file
+  logAppend: true
+  path: /var/log/mongodb-arb/mongod.log
+
+# Where and how to store data.
+storage:
+  dbPath: /var/lib/mongo-arb
+
+# how the process runs
+processManagement:
+  fork: true
+  pidFilePath: /var/run/mongodb/mongod-arb.pid
+  timeZoneInfo: /usr/share/zoneinfo
+
+# network interfaces
+net:
+  port: 27019
+  bindIp: 0.0.0.0  # Enter 0.0.0.0,:: to bind to all IPv4 and IPv6 addresses or, alternatively, use the net.bindIpAll setting.
+
+
+# security:
+#   authorization: enabled
+
+#operationProfiling:
+
+#replication:
+
+#sharding:
+
+## Enterprise-Only Options
+
+#auditLog:
 
 ```
 
-//セカンダリとアービターの起動
+//セカンダリとアービターの起動  
+systemd経由でmongodを起動していないt、/var/run/mongodbにPIDファイルを生成できない。
 ```
 $ sudo -u mongod /usr/bin/mongod -f /etc/mongod-sec.conf
 $ sudo -u mongod /usr/bin/mongod -f /etc/mongod-arb.conf
