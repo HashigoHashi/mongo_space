@@ -530,7 +530,7 @@ net:
 ```
 
 //セカンダリとアービターの起動  
-systemd経由でmongodを起動していないt、/var/run/mongodbにPIDファイルを生成できない。
+systemd経由でmongodを起動していないと、/var/run/mongodbにPIDファイルを生成できない。
 ```
 $ sudo -u mongod /usr/bin/mongod -f /etc/mongod-sec.conf
 $ sudo -u mongod /usr/bin/mongod -f /etc/mongod-arb.conf
@@ -547,4 +547,73 @@ $ mongosh --port 27019
 ```
 $ mongosh --port 27018 -u admin -p
 $ mongosh --port 27019 -u admin -p
+```
+
+//レプリカセットにキーファイルを作成
+レプリカセット同士はキーファイルという全く同じ内容のファイルを持つことで正しいメンバーであることを確認する
+```
+#キーファイルの中身はBASE64セットで使用できる文字のみをつかった6バイトから1024バイトのテキストファイルであるひつようがある。
+#opensslコマンドを使用して、ランダムな文字列を出力する
+$ sudo openssl rand -base64 756 > /tmp/keyFile
+$ sudo mv /tmp/keyFile /etc/keyFile
+#キーファイルは所有者以外にアクセス権限があってはいけない。
+$ sudo chown mongod:mongod /etc/keyFile
+$ sudo chmod 400 /etc/keyFile
+```
+本来は各サーバごとにキーファイルをSCPでコピーする必要があるが、今回の同じサーバの異なるインスタンスでレプリカセットにする場合は不要。
+
+//すべての設定ファイルに以下を追加する。
+```
+security:
+  authorization: enabled
+  keyFile: /etc/keyFile
+
+replication:
+  oplogSizeMB: 1024          ←oplogの最大サイズをMB単位で指定
+  replSetName: replSet01     ←任意のレプリカセット名
+```
+
+セカンダリの停止
+```
+$ sudo mongod -f /etc/mongod-sec.conf --shutdown
+$ sudo mongod -f /etc/mongod-arb.conf --shutdown
+```
+
+再起動
+```
+$ systemctl restart mongod
+$ sudo -u mongod /usr/bin/mongod -f /etc/mongod-sec.conf
+$ sudo -u mongod /usr/bin/mongod -f /etc/mongod-arb.conf
+```
+
+もしも起動ができない場合は、SELinuxを一時的にPermissiveに切り替えるなどする
+```
+$ sudo getenforce
+$ sudo setenforce 0
+```
+
+//レプリカセットの構築  
+どのインスタンスでも問題ないが、一応プライマリにしたいインスタンスにログインする
+```
+$ mongosh --port 27017 -u admin -p
+> rs.initiate({
+    _id : "replSet01",
+    members: [
+        { _id : 0, host : "localhost:27017", priority: 10 },
+        { _id : 1, host : "localhost:27018", priority: 1},
+        { _id : 2, host : "localhost:27019", arbiterOnly: true}
+    ]
+})
+```
+
+//自動フェールオーバーをためしてみる  
+//プライマリの停止
+```
+$ systemctl stop mongod
+```
+
+//セカンダリにログイン  
+プライマリになっていることが確認できる。
+```
+$ mongosh --port 27018 -u admin -p
 ```
