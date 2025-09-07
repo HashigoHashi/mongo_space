@@ -189,9 +189,13 @@ $ systemctl stop mongod
 )
 ```
 #認証の有効化  
+
+```
+$ mongosh
+```
 ※ユーザを作成後に人称の有効化をしないとログインできなくなってしまうので注意！  
 ```
-# sudo vi /etc/mongod.conf
+$ sudo vi /etc/mongod.conf
 ```
 以下の内容を追加
 ```
@@ -206,7 +210,7 @@ security:
 
 #バインドIPの変更
 ```
-sudo vi /etc/mongod.conf
+$ sudo vi /etc/mongod.conf
 ```
 以下の内容を追加
 ```
@@ -217,7 +221,7 @@ net:
 
 #接続
 ```
-# mongosh -u admin -p
+$ mongosh -u admin -p
 ```
 
 # データベースとコレクションの操作
@@ -530,4 +534,17 @@ systemd経由でmongodを起動していないt、/var/run/mongodbにPIDファ�
 ```
 $ sudo -u mongod /usr/bin/mongod -f /etc/mongod-sec.conf
 $ sudo -u mongod /usr/bin/mongod -f /etc/mongod-arb.conf
+```
+
+//セカンダリとアービターへの接続
+```
+$ mongosh --port 27018
+$ mongosh --port 27019
+```
+スーパーユーザ作成と認証の有効化を行う。認証の有効化。  
+
+//セカンダリとアービターへのスーパーユーザでの接続
+```
+$ mongosh --port 27018 -u admin -p
+$ mongosh --port 27019 -u admin -p
 ```
