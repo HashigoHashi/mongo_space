@@ -616,4 +616,6 @@ $ systemctl stop mongod
 プライマリになっていることが確認できる。
 ```
 $ mongosh --port 27018 -u admin -p
+> rs.status()
 ```
+確認後に再び停止したものを起動してあげると、レプリカセットに復帰したことも確認できる。  
