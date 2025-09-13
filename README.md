@@ -12,7 +12,7 @@ sudo firewall-cmd --list-ports
 sestatus
 sudo firewall-cmd --list-ports
 ```
-#Transparent Huge Pages 無効化
+#Transparent Huge Pages 無効化  
 #BLSエントリファイルを確認
 ```
 [takahashi_daigo@localhost ~]$ sudo ls /boot/loader/entries/
