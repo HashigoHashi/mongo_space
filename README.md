@@ -67,7 +67,7 @@ sudo yum install -y mongodb-org
 ```
 
 
-#起動準備
+#起動準備  
 #MongoDB管理ユーザの作成
 ```
 sudo useradd -s /bin/false mongod
