@@ -619,3 +619,58 @@ $ mongosh --port 27018 -u admin -p
 > rs.status()
 ```
 確認後に再び停止したものを起動してあげると、レプリカセットに復帰したことも確認できる。  
+
+# MongoDBのシャーディング構成
+
+MongoDBをすべて停止する  
+※運用後にシャーディングする場合はMongoDBをすべて停止する必要があるので本当にシャーディングする必要があるのかよく考えてから決定する
+```
+$ sudo mongod -f /etc/mongod-sec.conf --shutdown
+$ sudo mongod -f /etc/mongod-arb.conf --shutdown
+$ systemctl stop mongod
+```
+
+セカンダリとプライマリで設定ファイルの編集をおこなう
+/etc/mongod.conf
+/etc/mongod-sec.conf
+```
+# security:                     ←コメントアウト
+#   authorization: enabled      ←コメントアウト
+#   keyFile: /etc/keyFile       ←コメントアウト
+
+sharding:                       ←追加    
+  clusterRole: shardsvr         ←追加
+
+```
+
+アービターはセキュリティ設定だけを無効にする
+/etc/mongod-arb.conf
+```
+# security:                     ←コメントアウト
+#   authorization: enabled      ←コメントアウト
+#   keyFile: /etc/keyFile       ←コメントアウト
+```
+
+設定ファイルを編集したら、MongoDBを再起動して、シャーディングするデータベースとコレクションを作成する
+```
+$ systemctl restart mongod
+$ sudo -u mongod /usr/bin/mongod -f /etc/mongod-sec.conf
+$ sudo -u mongod /usr/bin/mongod -f /etc/mongod-arb.conf
+```
+
+プライマリにログインし、競争馬の名前とレースを記録するコレクションを作成
+```
+$ mongosh --port 27017
+> use horse
+> db.createCollection("racehorse")
+> db.racehorse.insert([
+  { "name": "タイキシャトル", "race":{ "date": "1998-11-22", "raceName": "マイルチャンピオンシップ"} },
+  { "name": "タイキシャトル", "race":{ "date": "1998-06-04", "raceName": "安田記念"} },
+  { "name": "タイキシャトル", "race":{ "date": "1997-12-14", "raceName": "スプリンターズステークス"} },
+  { "name": "トウカイテイオー", "race":{ "date": "1993-12-26", "raceName": "有馬記念"} },
+  { "name": "トウカイテイオー", "race":{ "date": "1992-11-29", "raceName": "ジャパンカップ"} },
+  { "name": "トウカイテイオー", "race":{ "date": "1991-05-26", "raceName": "東京優駿"} }
+])
+//シャードキーにはインデックスが必要
+> db.racehorse.createIndex({ name: 1})
+```
