@@ -674,3 +674,6 @@ $ mongosh --port 27017
 //シャードキーにはインデックスが必要
 > db.racehorse.createIndex({ name: 1})
 ```
+
+レプリカセット2の構築  
+レプリカセットをもう一つ構築する  
